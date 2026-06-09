@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>MultiMarket | Главная — Недвижимость, авто, одежда, техника</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f4f6fa; color: #0f172a; line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0px); } }
+    @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+    .navbar { background: white; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); position: sticky; top: 0; z-index: 100; }
+    .nav-container { max-width: 1400px; margin: 0 auto; padding: 0.8rem 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+    .logo { font-weight: 800; font-size: 1.6rem; letter-spacing: -0.02em; background: linear-gradient(135deg, #1e293b, #2c3e50); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .search-wrapper { flex: 1; max-width: 400px; min-width: 200px; }
+    .search-input { width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border: 2px solid #e2e8f0; border-radius: 60px; font-size: 0.9rem; transition: all 0.2s; background: #f8fafc url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 12px center; }
+    .search-input:focus { outline: none; border-color: #0f172a; background-color: white; }
+    .nav-links { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .nav-link { padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease; cursor: pointer; background: transparent; border: none; color: #334155; }
+    .nav-link:hover { background: #eef2ff; color: #0f3b5c; }
+    .nav-link.active { background: #0f172a; color: white; }
+    .favorite-badge { position: relative; }
+    .favorite-count { position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 20px; font-weight: 700; }
+    .page { display: none; max-width: 1400px; margin: 2rem auto; padding: 0 2rem 3rem; animation: fadeInUp 0.4s ease; }
+    .page.active-page { display: block; }
+    .hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 2.5rem; padding: 3rem 2.5rem; margin-bottom: 3rem; color: white; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2rem; }
+    .hero-content { flex: 1; }
+    .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #fff, #cbd5e1); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .hero p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 1.5rem; }
+    .hero-stats { display: flex; gap: 2rem; margin-top: 1rem; }
+    .stat { text-align: center; }
+    .stat-number { font-size: 2rem; font-weight: 800; }
+    .hero-emoji { font-size: 8rem; animation: float 3s ease-in-out infinite; }
+    .daily-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 2rem; padding: 2rem; margin: 2rem 0; color: white; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; cursor: pointer; transition: transform 0.3s; }
+    .daily-card:hover { transform: translateY(-5px); }
+    .daily-info { flex: 1; }
+    .daily-info h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .daily-price { font-size: 2rem; font-weight: 800; margin: 0.5rem 0; }
+    .daily-refresh { background: rgba(255,255,255,0.2); border: none; padding: 0.8rem 1.5rem; border-radius: 60px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .daily-refresh:hover { background: rgba(255,255,255,0.3); transform: rotate(180deg); }
+    .daily-emoji { font-size: 5rem; animation: float 2s ease-in-out infinite; }
+    .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.8rem; margin: 2rem 0; }
+    .category-card { background: white; border-radius: 1.8rem; padding: 2rem 1.5rem; text-align: center; transition: all 0.3s; cursor: pointer; border: 1px solid #eef2f8; }
+    .category-card:hover { transform: translateY(-8px); box-shadow: 0 24px 40px -16px rgba(0,0,0,0.2); }
+    .category-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .category-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .category-desc { color: #475569; font-size: 0.9rem; }
+    .filter-tabs { display: flex; gap: 1rem; margin: 0.5rem 0 1.8rem 0; background: #eef2f6; display: inline-flex; padding: 0.3rem; border-radius: 60px; }
+    .filter-btn { padding: 0.5rem 1.6rem; border-radius: 40px; font-weight: 600; font-size: 0.9rem; border: none; background: transparent; cursor: pointer; transition: 0.2s; color: #334155; }
+    .filter-btn.active-filter { background: white; color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.8rem; margin-top: 0.5rem; }
+    .card { background: white; border-radius: 1.5rem; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); border: 1px solid #eef2f8; position: relative; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 24px 36px -16px rgba(0, 0, 0, 0.15); }
+    .card-img { height: 180px; background: #eef2f8; display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; }
+    .favorite-btn { position: absolute; top: 12px; right: 12px; background: white; border: none; font-size: 1.5rem; cursor: pointer; padding: 6px 10px; border-radius: 50%; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 10; }
+    .favorite-btn:hover { transform: scale(1.1); }
+    .favorite-btn.active { color: #ef4444; animation: heartBeat 0.3s ease; }
+    .card-content { padding: 1.2rem 1.2rem 1.5rem; }
+    .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .card-desc { color: #475569; font-size: 0.85rem; margin-bottom: 0.8rem; }
+    .price { font-weight: 800; color: #0f3b5c; font-size: 1.25rem; margin-top: 0.5rem; }
+    .badge { display: inline-block; background: #eef2ff; padding: 0.2rem 0.7rem; border-radius: 40px; font-size: 0.7rem; font-weight: 600; color: #1e40af; margin-bottom: 0.4rem; }
+    .condition-badge { margin-left: 0.5rem; background: #e6f7e6; color: #2b6e2f; }
+    .location { font-size: 0.7rem; color: #5b6e8c; margin-top: 0.5rem; }
+    .no-results { text-align: center; padding: 3rem; background: white; border-radius: 2rem; color: #64748b; }
+    .about-container { background: white; border-radius: 2rem; padding: 2rem; border: 1px solid #eef2f6; }
+    .social-links { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0 0.5rem; }
+    .social-card { background: #f8fafc; border-radius: 1.2rem; padding: 1rem 1.8rem; display: inline-flex; align-items: center; gap: 0.8rem; text-decoration: none; color: #0f172a; font-weight: 600; transition: 0.2s; }
+    .social-card:hover { background: #ffffff; transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
+    .toast { position: fixed; bottom: 30px; right: 30px; background: #0f172a; color: white; padding: 12px 24px; border-radius: 60px; font-size: 0.9rem; z-index: 1000; animation: fadeInUp 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    footer { margin-top: auto; background: #ffffff; border-top: 1px solid #eef2f6; text-align: center; padding: 1.6rem; font-size: 0.85rem; color: #5b6e8c; }
+    @media (max-width: 720px) { .nav-container { flex-direction: column; } .search-wrapper { max-width: 100%; width: 100%; } .hero h1 { font-size: 2rem; } .hero-emoji { font-size: 4rem; } }
+  </style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+    <div class="logo">📦 MULTI MARKET</div>
+    <div class="search-wrapper">
+      <input type="text" class="search-input" id="globalSearch" placeholder="Поиск товаров...">
+    </div>
+    <div class="nav-links">
+      <button class="nav-link" data-page="home">🏠 Главная</button>
+      <button class="nav-link" data-page="realty">🏠 Недвижимость</button>
+      <button class="nav-link" data-page="cars">🚗 Автомобили</button>
+      <button class="nav-link" data-page="clothing">👕 Одежда</button>
+      <button class="nav-link" data-page="electronics">📱 Электроника</button>
+      <button class="nav-link favorite-badge" data-page="favorites">❤️ Избранное <span class="favorite-count" id="favoriteCount">0</span></button>
+      <button class="nav-link" data-page="about">📖 О нас</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="home-page" class="page active-page">
+    <div class="hero">
+      <div class="hero-content">
+        <h1>Покупай как профессионал</h1>
+        <p>Недвижимость, авто, одежда, электроника — 100+ проверенных объявлений с Avito</p>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-number">120+</div><div>объявлений</div></div>
+          <div class="stat"><div class="stat-number">4.9</div><div>рейтинг</div></div>
+          <div class="stat"><div class="stat-number">24/7</div><div>поддержка</div></div>
+        </div>
+      </div>
+      <div class="hero-emoji">🛍️✨</div>
+    </div>
+    <div id="dailyItemBlock"></div>
+    <h2 style="font-size: 1.8rem; margin: 1rem 0 0.5rem;">🔥 Категории товаров</h2>
+    <div class="categories-grid">
+      <div class="category-card" data-nav="realty"><div class="category-icon">🏡</div><div class="category-title">Недвижимость</div><div class="category-desc">Квартиры, дома, студии — от 1.9 млн ₽</div></div>
+      <div class="category-card" data-nav="cars"><div class="category-icon">🚗</div><div class="category-title">Автомобили</div><div class="category-desc">Новые и с пробегом, любые марки</div></div>
+      <div class="category-card" data-nav="clothing"><div class="category-icon">👕</div><div class="category-title">Одежда</div><div class="category-desc">Бренды, люкс, винтаж — доставка</div></div>
+      <div class="category-card" data-nav="electronics"><div class="category-icon">📱</div><div class="category-title">Электроника</div><div class="category-desc">Смартфоны, ноутбуки, PS5, дроны</div></div>
+    </div>
+  </div>
+
+  <div id="realty-page" class="page"><h1>🏡 Недвижимость (40+ объявлений)</h1><div class="filter-tabs" id="realty-tabs"><button class="filter-btn active-filter" data-filter="new">✨ Новостройки (20)</button><button class="filter-btn" data-filter="used">🏚️ Вторичка (20)</button></div><div class="cards-grid" id="realty-grid"></div></div>
+  <div id="cars-page" class="page"><h1>🚘 Автомобили (40+ объявлений)</h1><div class="filter-tabs" id="cars-tabs"><button class="filter-btn active-filter" data-filter="new">🚗 Новые (20)</button><button class="filter-btn" data-filter="used">🔄 С пробегом (20)</button></div><div class="cards-grid" id="cars-grid"></div></div>
+  <div id="clothing-page" class="page"><h1>👔 Одежда (40+ объявлений)</h1><div class="filter-tabs" id="clothing-tabs"><button class="filter-btn active-filter" data-filter="new">🆕 Новые (20)</button><button class="filter-btn" data-filter="used">♻️ Б/У (20)</button></div><div class="cards-grid" id="clothing-grid"></div></div>
+  <div id="electronics-page" class="page"><h1>📱 Электроника (40+ объявлений)</h1><div class="filter-tabs" id="electronics-tabs"><button class="filter-btn active-filter" data-filter="new">📦 Запечатано (20)</button><button class="filter-btn" data-filter="used">🔄 Б/У (20)</button></div><div class="cards-grid" id="electronics-grid"></div></div>
+  <div id="favorites-page" class="page"><h1>❤️ Избранное</h1><div class="cards-grid" id="favorites-grid"></div></div>
+  <div id="about-page" class="page">
+    <div class="about-container">
+      <h1>✨ О компании MultiMarket</h1>
+      <p style="margin: 1rem 0;">Мы — агрегатор лучших товаров с Avito. С 2026 года помогаем находить идеальные варианты.</p>
+      <h3>📞 Контакты</h3>
+      <p>📧 multimarket@avito.ru<br>📍 Москва, ул. Тверская 20<br>📞 +7 917 614 35 30</p>
+      <div class="social-links">
+        <a href="#" class="social-card">📘 VK</a><a href="#" class="social-card">✈️ Telegram</a><a href="#" class="social-card">📰 Дзен</a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>© 2025 MultiMarket — 120+ реальных объявлений с Avito</footer>
+
+<script>
+  // ==================== НЕДВИЖИМОСТЬ (20+20) ====================
+  const realtyData = {
+    new: [
+      { id: "r1", title: "ЖК «Символ» 1-к", desc: "36 м², отделка, сдача 2025", price: "10 590 000 ₽", img: "🏙️", badge: "Ипотека", loc: "Москва, м. Римская", condition: "Новостройка" },
+      { id: "r2", title: "Студия ЖК «Лайково»", desc: "23 м², панорама, ключи", price: "7 790 000 ₽", img: "🏢", badge: "Ключи 2026", loc: "Москва, Кунцево", condition: "Новое" },
+      { id: "r3", title: "2-комн. ЖК «ЗИЛАРТ»", desc: "62 м², элитный, вид на Москву", price: "21 490 000 ₽", img: "🌇", badge: "Премиум", loc: "Москва, ЗИЛ", condition: "Новостройка" },
+      { id: "r4", title: "Таунхаус Ступино", desc: "142 м², участок 4 сотки", price: "12 900 000 ₽", img: "🏘️", badge: "Готовый", loc: "Ступино", condition: "Новый" },
+      { id: "r5", title: "Апартаменты Сочи", desc: "42 м², море рядом, бассейн", price: "15 990 000 ₽", img: "🌊", badge: "Курорт", loc: "Сочи, Адлер", condition: "Новостройка" },
+      { id: "r6", title: "Пентхаус СПБ", desc: "120 м², терраса 40м²", price: "49 900 000 ₽", img: "🏙️", badge: "Элит", loc: "СПБ, Петроградка", condition: "Новое" },
+      { id: "r7", title: "1-комн. Казань", desc: "39 м², техника, ремонт", price: "8 990 000 ₽", img: "🔥", badge: "Акция", loc: "Казань, центр", condition: "Новостройка" },
+      { id: "r8", title: "Дуплекс 98м²", desc: "2 уровня, отделка", price: "19 500 000 ₽", img: "🏡", badge: "Таунхаус", loc: "Краснодар, ФМР", condition: "Новое" },
+      { id: "r9", title: "Студия Екб", desc: "19м² центр, ремонт", price: "5 290 000 ₽", img: "🌆", badge: "Центр", loc: "Екатеринбург", condition: "Новостройка" },
+      { id: "r10", title: "ЖК «Москва-Сити»", desc: "54 м² вид на башни", price: "34 990 000 ₽", img: "🏢", badge: "Бизнес", loc: "Москва, Сити", condition: "Новая" },
+      { id: "r11", title: "3-комн. ЖК «Саларьево»", desc: "78 м², паркинг", price: "15 490 000 ₽", img: "🏙️", badge: "Метро", loc: "Москва, Саларьево", condition: "Новостройка" },
+      { id: "r12", title: "Апарт-отель Сочи", desc: "25 м², готовый бизнес", price: "8 490 000 ₽", img: "🏖️", badge: "Инвестиции", loc: "Сочи, центр", condition: "Новый" },
+      { id: "r13", title: "Дом 150м² Новорижское", desc: "участок 10 соток", price: "18 900 000 ₽", img: "🏡", badge: "Коттедж", loc: "Красногорск", condition: "Новое" },
+      { id: "r14", title: "Студия Новогиреево", desc: "22 м², отделка", price: "6 990 000 ₽", img: "🏢", badge: "Старт", loc: "Москва", condition: "Новостройка" },
+      { id: "r15", title: "2-комн. ЖК «Видный»", desc: "55 м², балкон", price: "11 490 000 ₽", img: "🏙️", badge: "Семейный", loc: "Видное", condition: "Новое" },
+      { id: "r16", title: "Таунхаус Химки", desc: "130 м², терраса", price: "14 900 000 ₽", img: "🏘️", badge: "Готово", loc: "Химки", condition: "Новый" },
+      { id: "r17", title: "1-комн. Новосибирск", desc: "34 м², центр", price: "5 490 000 ₽", img: "🌆", badge: "Уют", loc: "Новосибирск", condition: "Новостройка" },
+      { id: "r18", title: "Пентхаус Казань", desc: "95 м², панорама", price: "22 900 000 ₽", img: "🌇", badge: "Люкс", loc: "Казань", condition: "Новое" },
+      { id: "r19", title: "ЖК «Алые Паруса»", desc: "45 м², вид на море", price: "17 990 000 ₽", img: "⛵", badge: "Премиум", loc: "Сочи", condition: "Новостройка" },
+      { id: "r20", title: "4-комн. Можайка", desc: "120 м², дом", price: "25 900 000 ₽", img: "🏡", badge: "Элит", loc: "Можайск", condition: "Новое" }
+    ],
+    used: [
+      { id: "u1", title: "3-комн. Новогиреево", desc: "68 м², балкон, ремонт", price: "12 790 000 ₽", img: "🏘️", badge: "Свободна", loc: "Москва, Новогиреево", condition: "Вторичка" },
+      { id: "u2", title: "2-комн. хрущёвка", desc: "44 м², свежий ремонт", price: "6 990 000 ₽", img: "🏚️", badge: "Под ипотеку", loc: "Москва, Кузьминки", condition: "Б/У" },
+      { id: "u3", title: "Дом Ленобласть", desc: "200 м², газ, участок", price: "9 900 000 ₽", img: "🏡", badge: "Срочно", loc: "Всеволожск", condition: "Вторичка" },
+      { id: "u4", title: "1-комн. СПБ центр", desc: "35 м², пешком до метро", price: "8 750 000 ₽", img: "🏙️", badge: "Центр", loc: "СПБ, Невский", condition: "Б/У" },
+      { id: "u5", title: "Комната общага", desc: "18 м², центр города", price: "1 990 000 ₽", img: "🚪", badge: "Бюджет", loc: "Краснодар", condition: "Вторичка" },
+      { id: "u6", title: "Дача 70м²", desc: "участок 6 соток, сад", price: "4 200 000 ₽", img: "🌳", badge: "Уют", loc: "Истра", condition: "Б/У" },
+      { id: "u7", title: "2-комн. Ростов", desc: "55м² центр, евроремонт", price: "6 490 000 ₽", img: "🏙️", badge: "Вторичка", loc: "Ростов-на-Дону", condition: "Б/У" },
+      { id: "u8", title: "4-комн. сталинка", desc: "126м², печи, высокие потолки", price: "15 990 000 ₽", img: "🏛️", badge: "Ретро", loc: "Москва, Арбат", condition: "Винтаж" },
+      { id: "u9", title: "Апартаменты у метро", desc: "28м², свежий ремонт", price: "7 490 000 ₽", img: "🚇", badge: "Срочно", loc: "СПБ, м. Площадь Восстания", condition: "Б/У" },
+      { id: "u10", title: "Дом Тверь", desc: "150м², ремонт, участок", price: "8 900 000 ₽", img: "🏡", badge: "ИЖС", loc: "Тверь", condition: "Вторичка" },
+      { id: "u11", title: "1-комн. Бутово", desc: "33 м², балкон", price: "5 790 000 ₽", img: "🏢", badge: "Недорого", loc: "Москва, Бутово", condition: "Б/У" },
+      { id: "u12", title: "3-комн. Люберцы", desc: "72 м², рядом парк", price: "9 490 000 ₽", img: "🏘️", badge: "Семейный", loc: "Люберцы", condition: "Вторичка" },
+      { id: "u13", title: "Студия Мытищи", desc: "20 м², готовый бизнес", price: "4 990 000 ₽", img: "🏢", badge: "Аренда", loc: "Мытищи", condition: "Б/У" },
+      { id: "u14", title: "2-комн. Подольск", desc: "48 м², ремонт", price: "5 990 000 ₽", img: "🏙️", badge: "Подходит", loc: "Подольск", condition: "Вторичка" },
+      { id: "u15", title: "Дом 120м² Дмитров", desc: "участок 8 соток", price: "7 900 000 ₽", img: "🏡", badge: "Дача", loc: "Дмитров", condition: "Б/У" },
+      { id: "u16", title: "1-комн. Зеленоград", desc: "32 м², балкон", price: "6 790 000 ₽", img: "🏢", badge: "Тихий", loc: "Зеленоград", condition: "Вторичка" },
+      { id: "u17", title: "3-комн. Королёв", desc: "68 м², космос", price: "8 990 000 ₽", img: "🚀", badge: "Наукоград", loc: "Королёв", condition: "Б/У" },
+      { id: "u18", title: "Комната 12м²", desc: "общежитие коридорное", price: "890 000 ₽", img: "🚪", badge: "Самый бюджет", loc: "Москва, Медведково", condition: "Вторичка" },
+      { id: "u19", title: "Дуплекс Истра", desc: "90 м², река рядом", price: "11 900 000 ₽", img: "🏘️", badge: "Рыбалка", loc: "Истра", condition: "Б/У" },
+      { id: "u20", title: "2-комн. Балашиха", desc: "56 м², новый ремонт", price: "7 490 000 ₽", img: "🏙️", badge: "Хит", loc: "Балашиха", condition: "Вторичка" }
+    ]
+  };
+
+  // ==================== АВТОМОБИЛИ (20+20) ====================
+  const carsData = {
+    new: [
+      { id: "c1", title: "Lada Vesta NG 2025", desc: "1.6 MT, 0 км, гарантия", price: "1 550 000 ₽", img: "🚗", badge: "Салон", loc: "Тольятти", condition: "Новый" },
+      { id: "c2", title: "Hyundai Creta 2025", desc: "2.0 AT, 4WD, полный привод", price: "3 090 000 ₽", img: "🚙", badge: "Официальный", loc: "Москва", condition: "Новинка" },
+      { id: "c3", title: "Geely Monjaro 2025", desc: "2.0 turbo, 4WD, люкс", price: "3 890 000 ₽", img: "🔥", badge: "Хит", loc: "Казань", condition: "Новый" },
+      { id: "c4", title: "Tesla Model 3 Highland", desc: "электромобиль, пробег 5 км", price: "5 690 000 ₽", img: "⚡", badge: "Электро", loc: "Москва", condition: "0 км" },
+      { id: "c5", title: "Chery Tiggo 7 Pro Max", desc: "1.6 CVT, полный фарш", price: "3 390 000 ₽", img: "🚘", badge: "Салон", loc: "Екатеринбург", condition: "Новый" },
+      { id: "c6", title: "BMW i4 eDrive40", desc: "электромобиль, 600 км запас", price: "8 290 000 ₽", img: "🔹", badge: "Premium", loc: "СПБ", condition: "Новое" },
+      { id: "c7", title: "KIA Sportage 2025", desc: "2.0 AT, новый кузов", price: "3 590 000 ₽", img: "🚙", badge: "Кредит 0%", loc: "Краснодар", condition: "Новый" },
+      { id: "c8", title: "Omoda C5 2025", desc: "1.5 турбо, панорама", price: "2 990 000 ₽", img: "🔥", badge: "Флагман", loc: "Новосибирск", condition: "Новое" },
+      { id: "c9", title: "Toyota RAV4 2025", desc: "гибрид AWD, японская сборка", price: "4 990 000 ₽", img: "🌲", badge: "Надёжный", loc: "Москва", condition: "Новый" },
+      { id: "c10", title: "Haval Jolion 2024", desc: "1.5 AT, пробег 15 км", price: "2 450 000 ₽", img: "🇨🇳", badge: "Хит", loc: "Ростов-на-Дону", condition: "Новое" },
+      { id: "c11", title: "Mercedes E 2025", desc: "E200, полный привод", price: "6 990 000 ₽", img: "⭐", badge: "Престиж", loc: "Москва", condition: "Новый" },
+      { id: "c12", title: "Audi Q5 2025", desc: "2.0 Quattro, S-Line", price: "5 490 000 ₽", img: "🚙", badge: "Спорт", loc: "СПБ", condition: "Новый" },
+      { id: "c13", title: "Volkswagen Tiguan 2025", desc: "1.4 TSI, DSG", price: "3 790 000 ₽", img: "🚗", badge: "Немец", loc: "Казань", condition: "Новый" },
+      { id: "c14", title: "Skoda Kodiaq 2025", desc: "2.0 TDI, 7 мест", price: "4 290 000 ₽", img: "🚘", badge: "Семейный", loc: "Екатеринбург", condition: "Новый" },
+      { id: "c15", title: "Nissan X-Trail 2025", desc: "1.5 VC Turbo, 4WD", price: "3 990 000 ₽", img: "🚙", badge: "Японец", loc: "Новосибирск", condition: "Новый" },
+      { id: "c16", title: "Mazda CX-5 2025", desc: "2.5 AT, KODO дизайн", price: "4 190 000 ₽", img: "🚗", badge: "Дизайн", loc: "Краснодар", condition: "Новый" },
+      { id: "c17", title: "Hongqi HS5", desc: "премиум, 2.0 турбо", price: "4 990 000 ₽", img: "🔥", badge: "Китайский люкс", loc: "Москва", condition: "Новый" },
+      { id: "c18", title: "Exeed LX 2025", desc: "1.6 турбо, премиум", price: "2 990 000 ₽", img: "🚘", badge: "Популярный", loc: "СПБ", condition: "Новый" },
+      { id: "c19", title: "Jetour X70 Plus", desc: "7 мест, большой", price: "3 290 000 ₽", img: "🚙", badge: "Просторный", loc: "Казань", condition: "Новый" },
+      { id: "c20", title: "Lixiang L9", desc: "электрика, премиум", price: "9 990 000 ₽", img: "⚡", badge: "Люкс", loc: "Москва", condition: "Новый" }
+    ],
+    used: [
+      { id: "u1", title: "KIA Rio 2021", desc: "1.6 AT, 1 владелец, 45 т.км", price: "1 690 000 ₽", img: "🚗", badge: "Проверен", loc: "Москва", condition: "Б/У" },
+      { id: "u2", title: "VW Polo 2019", desc: "1.6, 62 т.км, состояние отл.", price: "1 150 000 ₽", img: "🚙", badge: "Эконом", loc: "Н.Новгород", condition: "С пробегом" },
+      { id: "u3", title: "Toyota Camry 2020", desc: "2.5, кожа, 55 т.км", price: "3 450 000 ₽", img: "🚘", badge: "Надёжная", loc: "Казань", condition: "Б/У" },
+      { id: "u4", title: "BMW X5 2018", desc: "3.0d, 110к км, полный", price: "5 190 000 ₽", img: "🔹", badge: "Premium", loc: "Москва", condition: "Б/У" },
+      { id: "u5", title: "Renault Logan 2015", desc: "1.6, 90к км, ходовой", price: "470 000 ₽", img: "🚗", badge: "Рабочий", loc: "Краснодар", condition: "Б/У" },
+      { id: "u6", title: "Mitsubishi Lancer X", desc: "1.8 AT, 2011, 95т.км", price: "620 000 ₽", img: "🏁", badge: "Классика", loc: "Ростов-на-Дону", condition: "Б/У" },
+      { id: "u7", title: "Hyundai Solaris 2018", desc: "1.6 AT, 82к, ТО у дилера", price: "1 090 000 ₽", img: "🚙", badge: "Проверен", loc: "Екатеринбург", condition: "Б/У" },
+      { id: "u8", title: "Ford Focus 2014", desc: "1.6, живой, 100 т.км", price: "520 000 ₽", img: "🚗", badge: "Бюджетный", loc: "Самара", condition: "Б/У" },
+      { id: "u9", title: "Nissan Qashqai 2019", desc: "2.0 4WD, 78к, мультимедиа", price: "2 190 000 ₽", img: "🚘", badge: "Кроссовер", loc: "СПБ", condition: "Б/У" },
+      { id: "u10", title: "Mercedes E 200 2017", desc: "AMG пакет, 65т.км", price: "2 990 000 ₽", img: "⭐", badge: "Комфорт", loc: "Москва", condition: "Б/У" },
+      { id: "u11", title: "Audi A6 2019", desc: "2.0 TDI, quattro", price: "3 490 000 ₽", img: "🚗", badge: "Бизнес", loc: "СПБ", condition: "Б/У" },
+      { id: "u12", title: "BMW 3 Series 2018", desc: "320i, M пакет", price: "2 490 000 ₽", img: "🔹", badge: "Спорт", loc: "Москва", condition: "Б/У" },
+      { id: "u13", title: "Volkswagen Passat 2019", desc: "2.0 TSI, DSG", price: "2 190 000 ₽", img: "🚙", badge: "Комфорт", loc: "Казань", condition: "Б/У" },
+      { id: "u14", title: "Skoda Octavia 2020", desc: "1.4 TSI, 45к км", price: "1 890 000 ₽", img: "🚘", badge: "Хит", loc: "Екатеринбург", condition: "Б/У" },
+      { id: "u15", title: "Mazda 6 2019", desc: "2.0 AT, KODO", price: "2 290 000 ₽", img: "🚗", badge: "Японка", loc: "Новосибирск", condition: "Б/У" },
+      { id: "u16", title: "Honda CR-V 2018", desc: "2.4 AT, полный", price: "2 590 000 ₽", img: "🚙", badge: "Надёжный", loc: "Краснодар", condition: "Б/У" },
+      { id: "u17", title: "Subaru Forester 2017", desc: "2.5 AWD, оптика", price: "2 190 000 ₽", img: "🚘", badge: "Оптимальный", loc: "Москва", condition: "Б/У" },
+      { id: "u18", title: "Lexus RX 350 2016", desc: "3.5 AT, кожа", price: "3 990 000 ₽", img: "🌟", badge: "Люкс", loc: "СПБ", condition: "Б/У" },
+      { id: "u19", title: "Chevrolet Cruze 2013", desc: "1.8 AT, 95к км", price: "490 000 ₽", img: "🚗", badge: "Рабочий", loc: "Ростов-на-Дону", condition: "Б/У" },
+      { id: "u20", title: "Ford Kuga 2016", desc: "2.0 AT, 4WD", price: "1 290 000 ₽", img: "🚙", badge: "Кроссовер", loc: "Самара", condition: "Б/У" }
+    ]
+  };
+
+  // ==================== ОДЕЖДА (20+20) ====================
+  const clothingData = {
+    new: [
+      { id: "cl1", title: "Nike Air Max 2024", desc: "размер 42, оригинал, коробка", price: "13 990 ₽", img: "👟", badge: "Оригинал", loc: "Москва", condition: "Новые" },
+      { id: "cl2", title: "Canada Goose M", desc: "пуховик с биркой, чёрный", price: "59 900 ₽", img: "🧥", badge: "Premium", loc: "СПБ", condition: "Новый" },
+      { id: "cl3", title: "Stone Island 2025", desc: "лимитка, новая", price: "32 500 ₽", img: "🧶", badge: "Коллекция", loc: "Москва", condition: "Новинка" },
+      { id: "cl4", title: "Balenciaga футболка", desc: "XL, оригинал", price: "28 900 ₽", img: "👕", badge: "Дизайн", loc: "Москва", condition: "Новая" },
+      { id: "cl5", title: "Apple Watch S9", desc: "запечатаны, GPS", price: "39 990 ₽", img: "⌚", badge: "Гаджет", loc: "Казань", condition: "Новые" },
+      { id: "cl6", title: "Acne Studios джинсы", desc: "32/32, новые", price: "24 900 ₽", img: "👖", badge: "Сток", loc: "Екатеринбург", condition: "Новое" },
+      { id: "cl7", title: "Moncler куртка L", desc: "пух, оригинал, бирки", price: "118 000 ₽", img: "🧥", badge: "Люкс", loc: "Москва", condition: "Новое" },
+      { id: "cl8", title: "New Balance 550", desc: "44 размер, реплика?", price: "17 900 ₽", img: "👟", badge: "Редкие", loc: "СПБ", condition: "Новые" },
+      { id: "cl9", title: "Carhartt шапка", desc: "новая, beanie", price: "4 990 ₽", img: "🧢", badge: "Streetwear", loc: "Краснодар", condition: "Новое" },
+      { id: "cl10", title: "Fjällräven рюкзак", desc: "Kånken, синий", price: "7 200 ₽", img: "🎒", badge: "Оригинал", loc: "Ростов-на-Дону", condition: "Новый" },
+      { id: "cl11", title: "Supreme Hoodie", desc: "M, Box Logo", price: "45 000 ₽", img: "👕", badge: "Редкость", loc: "Москва", condition: "Новый" },
+      { id: "cl12", title: "Yeezy 350 V2", desc: "43 размер", price: "32 900 ₽", img: "👟", badge: "Коллекция", loc: "СПБ", condition: "Новые" },
+      { id: "cl13", title: "The North Face куртка", desc: "L, Nuptse 1996", price: "29 900 ₽", img: "🧥", badge: "Хит", loc: "Казань", condition: "Новый" },
+      { id: "cl14", title: "Adidas Samba OG", desc: "41 размер", price: "11 990 ₽", img: "👟", badge: "Тренд", loc: "Екатеринбург", condition: "Новые" },
+      { id: "cl15", title: "Ralph Lauren поло", desc: "M, классика", price: "8 900 ₽", img: "👕", badge: "Америка", loc: "Москва", condition: "Новое" },
+      { id: "cl16", title: "Hugo Boss костюм", desc: "50 размер", price: "39 900 ₽", img: "👔", badge: "Офис", loc: "СПБ", condition: "Новый" },
+      { id: "cl17", title: "Armani джинсы", desc: "32/32", price: "18 900 ₽", img: "👖", badge: "Италия", loc: "Москва", condition: "Новые" },
+      { id: "cl18", title: "Gucci кепка", desc: "унисекс", price: "24 900 ₽", img: "🧢", badge: "Люкс", loc: "Краснодар", condition: "Новая" },
+      { id: "cl19", title: "Puma RS-X", desc: "42 размер", price: "8 990 ₽", img: "👟", badge: "Спорт", loc: "Новосибирск", condition: "Новые" },
+      { id: "cl20", title: "Uniqlo х MASTERMIND", desc: "L, лимитка", price: "12 900 ₽", img: "👕", badge: "Коллаборация", loc: "Ростов-на-Дону", condition: "Новое" }
+    ],
+    used: [
+      { id: "u1", title: "Zara куртка S", desc: "1 сезон, состояние идеал", price: "3 990 ₽", img: "🧥", badge: "Эко", loc: "Москва", condition: "Б/У" },
+      { id: "u2", title: "Air Jordan 43", desc: "9/10, 44 размер", price: "8 900 ₽", img: "👟", badge: "Винтаж", loc: "СПБ", condition: "Б/У" },
+      { id: "u3", title: "Michael Kors сумка", desc: "потёртости, оригинал", price: "9 900 ₽", img: "👜", badge: "Комиссия", loc: "Новосибирск", condition: "Б/У" },
+      { id: "u4", title: "Платье вечернее 44", desc: "носилось 2 раза", price: "5 500 ₽", img: "👗", badge: "Как новое", loc: "Краснодар", condition: "Б/У" },
+      { id: "u5", title: "Burberry шарф", desc: "клетка, отличное", price: "8 200 ₽", img: "🧣", badge: "Люкс", loc: "Москва", condition: "Б/У" },
+      { id: "u6", title: "Herschel рюкзак", desc: "винтаж, 2015", price: "2 990 ₽", img: "🎒", badge: "Уникальный", loc: "Ростов-на-Дону", condition: "Б/У" },
+      { id: "u7", title: "Off-White толстовка", desc: "M, 8/10", price: "18 900 ₽", img: "👚", badge: "Дизайн", loc: "Москва", condition: "Б/У" },
+      { id: "u8", title: "Max Mara пальто", desc: "40 размер, Италия", price: "45 000 ₽", img: "🧥", badge: "Винтаж", loc: "СПБ", condition: "Б/У" },
+      { id: "u9", title: "Yeezy Gap кепка", desc: "редкая, 9/10", price: "5 900 ₽", img: "🧢", badge: "Б/У", loc: "Москва", condition: "Б/У" },
+      { id: "u10", title: "Levi's 501 джинсы", desc: "31/30, США", price: "2 500 ₽", img: "👖", badge: "Винтаж", loc: "Казань", condition: "Винтаж" },
+      { id: "u11", title: "Tommy Hilfiger свитер", desc: "L, шерсть", price: "3 900 ₽", img: "🧥", badge: "Уют", loc: "Екатеринбург", condition: "Б/У" },
+      { id: "u12", title: "Nike Tech Fleece", desc: "L, 8/10", price: "5 900 ₽", img: "👕", badge: "Тренд", loc: "Москва", condition: "Б/У" },
+      { id: "u13", title: "Bape куртка", desc: "XL, японский", price: "29 900 ₽", img: "🧥", badge: "Япония", loc: "СПБ", condition: "Б/У" },
+      { id: "u14", title: "Fendi ремень", desc: "оригинал", price: "14 900 ₽", img: "💎", badge: "Люкс", loc: "Москва", condition: "Б/У" },
+      { id: "u15", title: "Carhartt WIP штаны", desc: "32/32", price: "4 900 ₽", img: "👖", badge: "Рабочие", loc: "Краснодар", condition: "Б/У" },
+      { id: "u16", title: "Polo Ralph Lauren", desc: "M, классика", price: "2 900 ₽", img: "👕", badge: "Америка", loc: "Ростов", condition: "Б/У" },
+      { id: "u17", title: "Adidas Yeezy Slide", desc: "44 размер", price: "5 900 ₽", img: "👟", badge: "Домашние", loc: "Казань", condition: "Б/У" },
+      { id: "u18", title: "Stone Island штаны", desc: "L, карго", price: "12 900 ₽", img: "👖", badge: "Коллекция", loc: "Москва", condition: "Б/У" },
+      { id: "u19", title: "Moncler шапка", desc: "оригинал", price: "8 900 ₽", img: "🧢", badge: "Люкс", loc: "СПБ", condition: "Б/У" },
+      { id: "u20", title: "Under Armour куртка", desc: "M, ветровка", price: "2 990 ₽", img: "🧥", badge: "Спорт", loc: "Новосибирск", condition: "Б/У" }
+    ]
+  };
+
+  // ==================== ЭЛЕКТРОНИКА (20+20) ====================
+  const electronicsData = {
+    new: [
+      { id: "e1", title: "iPhone 16 Pro 256", desc: "запечатан, гарантия", price: "139 990 ₽", img: "📱", badge: "Новинка", loc: "Москва", condition: "Заводская пленка" },
+      { id: "e2", title: "MacBook Air M3", desc: "8/512, новая", price: "149 990 ₽", img: "💻", badge: "Apple", loc: "СПБ", condition: "Новый" },
+      { id: "e3", title: "PlayStation 5 Slim", desc: "дисковод, 2 контроллера", price: "61 990 ₽", img: "🎮", badge: "Консоль", loc: "Москва", condition: "Запечатано" },
+      { id: "e4", title: "Samsung Neo QLED 65", desc: "8K, смарт ТВ", price: "199 990 ₽", img: "📺", badge: "Супер", loc: "Казань", condition: "Новое" },
+      { id: "e5", title: "Sony WH-1000XM6", desc: "шумодав, лучшие", price: "31 990 ₽", img: "🎧", badge: "Аудио", loc: "Екатеринбург", condition: "Новинка" },
+      { id: "e6", title: "iPad Pro 13 M4", desc: "512GB, WiFi+5G", price: "139 000 ₽", img: "📲", badge: "Заводской", loc: "Москва", condition: "Новый" },
+      { id: "e7", title: "Samsung S24 Ultra", desc: "256GB, Titanium", price: "119 990 ₽", img: "📱", badge: "Флагман", loc: "Краснодар", condition: "Новый" },
+      { id: "e8", title: "RTX 4080 Super", desc: "новая, коробка", price: "129 900 ₽", img: "🖥️", badge: "PC", loc: "Москва", condition: "Новая" },
+      { id: "e9", title: "DJI Mini 4 Pro", desc: "fly more combo", price: "89 900 ₽", img: "🚁", badge: "Дрон", loc: "СПБ", condition: "Новый" },
+      { id: "e10", title: "Roborock S8 Pro Ultra", desc: "самоочистка", price: "69 990 ₽", img: "🤖", badge: "Умный дом", loc: "Новосибирск", condition: "Новый" },
+      { id: "e11", title: "Xbox Series X", desc: "1TB, 2 джойстика", price: "54 990 ₽", img: "🎮", badge: "Игры", loc: "Москва", condition: "Новый" },
+      { id: "e12", title: "Apple Watch Ultra 2", desc: "49mm, океанский", price: "79 990 ₽", img: "⌚", badge: "Экстрим", loc: "СПБ", condition: "Новый" },
+      { id: "e13", title: "AirPods Max", desc: "зелёные", price: "49 990 ₽", img: "🎧", badge: "Наушники", loc: "Казань", condition: "Новые" },
+      { id: "e14", title: "Samsung Galaxy Tab S9", desc: "256GB, S Pen", price: "79 990 ₽", img: "📱", badge: "Планшет", loc: "Екатеринбург", condition: "Новый" },
+      { id: "e15", title: "GoPro Hero 12 Black", desc: "аксессуары в подарок", price: "44 990 ₽", img: "📷", badge: "Экшн", loc: "Москва", condition: "Новая" },
+      { id: "e16", title: "ASUS ROG Strix G18", desc: "i9, RTX 4090", price: "299 990 ₽", img: "💻", badge: "Игровой", loc: "СПБ", condition: "Новый" },
+      { id: "e17", title: "PS VR2", desc: "шлем виртуальной реальности", price: "49 990 ₽", img: "🥽", badge: "VR", loc: "Краснодар", condition: "Новый" },
+      { id: "e18", title: "Nintendo Switch OLED", desc: "Mario Kart 8", price: "34 990 ₽", img: "🎮", badge: "Портативка", loc: "Москва", condition: "Новая" },
+      { id: "e19", title: "Xiaomi 14 Ultra", desc: "512GB, Leica", price: "99 990 ₽", img: "📱", badge: "Камерафон", loc: "Ростов-на-Дону", condition: "Новый" },
+      { id: "e20", title: "Google Pixel 8 Pro", desc: "256GB, Bay Blue", price: "89 990 ₽", img: "📱", badge: "Чистый Android", loc: "Новосибирск", condition: "Новый" }
+    ],
+    used: [
+      { id: "u1", title: "iPhone 14 Pro 256", desc: "аккум 90%, как новый", price: "69 990 ₽", img: "📱", badge: "Проверен", loc: "Москва", condition: "Б/У" },
+      { id: "u2", title: "Lenovo Legion 5", desc: "Ryzen 7, RTX3060, 32GB", price: "79 990 ₽", img: "💻", badge: "Игровой", loc: "Новосибирск", condition: "Б/У" },
+      { id: "u3", title: "Xiaomi S10+", desc: "робот-пылесос", price: "14 990 ₽", img: "🤖", badge: "Б/У", loc: "Краснодар", condition: "2 года" },
+      { id: "u4", title: "Samsung S23 Ultra", desc: "12/256, царапин нет", price: "54 990 ₽", img: "📱", badge: "Флагман", loc: "СПБ", condition: "Б/У" },
+      { id: "u5", title: "RTX 3070", desc: "игры, майнинг не был", price: "39 990 ₽", img: "🖥️", badge: "PC", loc: "Москва", condition: "Б/У" },
+      { id: "u6", title: "DJI Mavic Mini 2", desc: "комплект", price: "34 900 ₽", img: "🚁", badge: "Дрон", loc: "Казань", condition: "Б/У" },
+      { id: "u7", title: "PS4 Pro 1TB", desc: "2 джойстика, игры", price: "24 990 ₽", img: "🎮", badge: "Консоль", loc: "Екатеринбург", condition: "Б/У" },
+      { id: "u8", title: "Apple Watch Ultra", desc: "49мм, 1 год", price: "48 990 ₽", img: "⌚", badge: "Экстрим", loc: "Москва", condition: "Б/У" },
+      { id: "u9", title: "LG C2 55 OLED", desc: "2023, ТВ", price: "69 900 ₽", img: "📺", badge: "Кинотеатр", loc: "СПБ", condition: "Б/У" },
+      { id: "u10", title: "Yandex Station Max", desc: "2 мес, Алиса", price: "8 990 ₽", img: "🔊", badge: "Умный дом", loc: "Ростов-на-Дону", condition: "Б/У" },
+      { id: "u11", title: "iPhone 13 Pro Max", desc: "графит, 256, 88%", price: "59 990 ₽", img: "📱", badge: "Хит", loc: "Москва", condition: "Б/У" },
+      { id: "u12", title: "MacBook Pro M1", desc: "14, 16GB, 512", price: "119 990 ₽", img: "💻", badge: "Pro", loc: "СПБ", condition: "Б/У" },
+      { id: "u13", title: "AirPods Pro 2", desc: "USB-C, 2023", price: "16 990 ₽", img: "🎧", badge: "Наушники", loc: "Казань", condition: "Б/У" },
+      { id: "u14", title: "Steam Deck 512", desc: "портативная консоль", price: "44 990 ₽", img: "🎮", badge: "ПК в кармане", loc: "Москва", condition: "Б/У" },
+      { id: "u15", title: "Huawei Watch GT 4", desc: "46mm", price: "12 990 ₽", img: "⌚", badge: "Умные", loc: "Краснодар", condition: "Б/У" },
+      { id: "u16", title: "RTX 2060", desc: "бюджетная", price: "17 990 ₽", img: "🖥️", badge: "Для игр", loc: "Екатеринбург", condition: "Б/У" },
+      { id: "u17", title: "Xiaomi Mi Band 8", desc: "новые", price: "2 990 ₽", img: "⌚", badge: "Фитнес", loc: "Новосибирск", condition: "Б/У" },
+      { id: "u18", title: "JBL Charge 5", desc: "мощная колонка", price: "8 990 ₽", img: "🔊", badge: "Музыка", loc: "Москва", condition: "Б/У" },
+      { id: "u19", title: "Kindle Paperwhite", desc: "5-е поколение", price: "9 990 ₽", img: "📖", badge: "Книги", loc: "СПБ", condition: "Б/У" },
+      { id: "u20", title: "Nintendo Switch Lite", desc: "жёлтая", price: "14 990 ₽", img: "🎮", badge: "Портативка", loc: "Казань", condition: "Б/У" }
+    ]
+  };
+
+  // Объединение всех товаров
+  const allItems = [
+    ...realtyData.new, ...realtyData.used,
+    ...carsData.new, ...carsData.used,
+    ...clothingData.new, ...clothingData.used,
+    ...electronicsData.new, ...electronicsData.used
+  ];
+
+  // ========== ИЗБРАННОЕ ==========
+  let favorites = JSON.parse(localStorage.getItem('multimarket_favorites') || '[]');
+  function saveFavorites() { localStorage.setItem('multimarket_favorites', JSON.stringify(favorites)); updateFavoriteCount(); }
+  function updateFavoriteCount() { document.getElementById('favoriteCount').innerText = favorites.length; }
+  function isFavorite(id) { return favorites.includes(id); }
+  function toggleFavorite(id) {
+    if (isFavorite(id)) favorites = favorites.filter(fid => fid !== id);
+    else { favorites.push(id); showToast('✨ Добавлено в избранное!'); }
+    saveFavorites(); renderFavoritesPage(); renderAllCardsWithFavButtons(); updateFavoriteCount();
+  }
+  function showToast(msg) { let t = document.createElement('div'); t.className = 'toast'; t.innerText = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2000); }
+
+  // ========== РЕНДЕР ==========
+  function renderCard(item) {
+    const active = isFavorite(item.id);
+    return `<div class="card" data-item-id="${item.id}">
+      <div class="card-img">
+        ${item.img}
+        <button class="favorite-btn ${active ? 'active' : ''}" data-id="${item.id}">${active ? '❤️' : '🤍'}</button>
+      </div>
+      <div class="card-content">
+        <div class="card-title">${item.title}</div>
+        <div class="card-desc">${item.desc}</div>
+        <span class="badge">${item.badge}</span><span class="badge condition-badge">${item.condition}</span>
+        <div class="price">${item.price}</div>
+        <div class="location">📍 ${item.loc}</div>
+      </div>
+    </div>`;
+  }
+
+  function attachFavoriteEvents() {
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+      btn.removeEventListener('click', window._favHandler);
+      const handler = (e) => { e.stopPropagation(); toggleFavorite(btn.getAttribute('data-id')); };
+      btn.addEventListener('click', handler);
+      btn._favHandler = handler;
+    });
+  }
+
+  function renderFiltered(containerId, dataSource, filterType) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const items = dataSource[filterType];
+    if (!items) return;
+    container.innerHTML = items.map(item => renderCard(item)).join('');
+    attachFavoriteEvents();
+  }
+
+  function renderAllCardsWithFavButtons() {
+    renderFiltered('realty-grid', realtyData, currentRealtyFilter);
+    renderFiltered('cars-grid', carsData, currentCarsFilter);
+    renderFiltered('clothing-grid', clothingData, currentClothingFilter);
+    renderFiltered('electronics-grid', electronicsData, currentElectronicsFilter);
+  }
+
+  function renderFavoritesPage() {
+    const favContainer = document.getElementById('favorites-grid');
+    if (!favContainer) return;
+    const favItems = allItems.filter(item => favorites.includes(item.id));
+    if (favItems.length === 0) favContainer.innerHTML = '<div class="no-results">❤️ Нет избранных товаров. Добавьте что-нибудь!</div>';
+    else favContainer.innerHTML = favItems.map(item => renderCard(item)).join('');
+    attachFavoriteEvents();
+  }
+
+  // ========== ТОВАР ДНЯ ==========
+  function getRandomItem() { return allItems[Math.floor(Math.random() * allItems.length)]; }
+  function renderDailyItem() {
+    const item = getRandomItem();
+    const block = document.getElementById('dailyItemBlock');
+    if (!block) return;
+    block.innerHTML = `
+      <div class="daily-card" data-id="${item.id}">
+        <div class="daily-emoji">${item.img}</div>
+        <div class="daily-info">
+          <h3>🎁 ТОВАР ДНЯ 🔥</h3>
+          <div style="font-size:1.3rem; font-weight:600;">${item.title}</div>
+          <div class="daily-price">${item.price}</div>
+          <div>${item.desc} | 📍${item.loc}</div>
+        </div>
+        <button class="daily-refresh" id="refreshDaily">🔄 СЛУЧАЙНЫЙ ТОВАР</button>
+      </div>
+    `;
+    const refreshBtn = document.getElementById('refreshDaily');
+    refreshBtn?.addEventListener('click', (e) => { e.stopPropagation(); renderDailyItem(); showToast('🎲 Новый товар дня!'); });
+  }
+
+  // ========== ПОИСК ==========
+  const searchInput = document.getElementById('globalSearch');
+  let currentPage = 'home';
+  function filterBySearch(query) {
+    if (!query.trim()) { renderAllCardsWithFavButtons(); return; }
+    const lowerQuery = query.toLowerCase();
+    const filterItems = (items) => items.filter(item => item.title.toLowerCase().includes(lowerQuery) || item.desc.toLowerCase().includes(lowerQuery));
+    const filterAndRender = (containerId, dataSource, filterType) => {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const filtered = filterItems(dataSource[filterType]);
+      if (filtered.length === 0) container.innerHTML = '<div class="no-results">🔍 Ничего не найдено</div>';
+      else container.innerHTML = filtered.map(item => renderCard(item)).join('');
+      attachFavoriteEvents();
+    };
+    if (currentPage === 'realty') filterAndRender('realty-grid', realtyData, currentRealtyFilter);
+    else if (currentPage === 'cars') filterAndRender('cars-grid', carsData, currentCarsFilter);
+    else if (currentPage === 'clothing') filterAndRender('clothing-grid', clothingData, currentClothingFilter);
+    else if (currentPage === 'electronics') filterAndRender('electronics-grid', electronicsData, currentElectronicsFilter);
+  }
+
+  // Переменные фильтров
+  let currentRealtyFilter = 'new', currentCarsFilter = 'new', currentClothingFilter = 'new', currentElectronicsFilter = 'new';
+
+  // ========== НАСТРОЙКА ВКЛАДОК ==========
+  function setupTabs(pageId, dataObject, gridId) {
+    const tabsContainer = document.getElementById(`${pageId}-tabs`);
+    if (!tabsContainer) return;
+    const btns = tabsContainer.querySelectorAll('.filter-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = btn.getAttribute('data-filter');
+        if (pageId === 'realty') currentRealtyFilter = f;
+        else if (pageId === 'cars') currentCarsFilter = f;
+        else if (pageId === 'clothing') currentClothingFilter = f;
+        else if (pageId === 'electronics') currentElectronicsFilter = f;
+        renderFiltered(gridId, dataObject, f);
+        btns.forEach(b => b.classList.remove('active-filter'));
+        btn.classList.add('active-filter');
+        if (searchInput.value.trim()) filterBySearch(searchInput.value);
+      });
+    });
+  }
+  setupTabs('realty', realtyData, 'realty-grid');
+  setupTabs('cars', carsData, 'cars-grid');
+  setupTabs('clothing', clothingData, 'clothing-grid');
+  setupTabs('electronics', electronicsData, 'electronics-grid');
+
+  // ========== НАВИГАЦИЯ ==========
+  const pages = {
+    home: document.getElementById('home-page'), realty: document.getElementById('realty-page'),
+    cars: document.getElementById('cars-page'), clothing: document.getElementById('clothing-page'),
+    electronics: document.getElementById('electronics-page'), about: document.getElementById('about-page'),
+    favorites: document.getElementById('favorites-page')
+  };
+  const navBtns = document.querySelectorAll('.nav-link');
+  function setActivePage(pageId) {
+    currentPage = pageId;
+    Object.values(pages).forEach(p => p?.classList.remove('active-page'));
+    if (pages[pageId]) pages[pageId].classList.add('active-page');
+    navBtns.forEach(btn => { if (btn.getAttribute('data-page') === pageId) btn.classList.add('active'); else btn.classList.remove('active'); });
+    window.history.replaceState(null, '', '#' + pageId);
+    searchInput.value = '';
+    if (pageId === 'favorites') renderFavoritesPage();
+    else renderAllCardsWithFavButtons();
+    if (pageId === 'home') renderDailyItem();
+  }
+  navBtns.forEach(btn => btn.addEventListener('click', () => { setActivePage(btn.getAttribute('data-page')); window.scrollTo({ top: 0 }); }));
+  document.querySelectorAll('.category-card').forEach(card => card.addEventListener('click', () => { const to = card.getAttribute('data-nav'); if (to && pages[to]) setActivePage(to); }));
+  function handleHash() { let hash = window.location.hash.substring(1); if (hash && pages[hash]) setActivePage(hash); else setActivePage('home'); }
+  window.addEventListener('hashchange', handleHash);
+  searchInput.addEventListener('input', (e) => { if (currentPage !== 'home' && currentPage !== 'about' && currentPage !== 'favorites') filterBySearch(e.target.value); });
+  
+  // Инициализация
+  handleHash();
+  updateFavoriteCount();
+  renderDailyItem();
+</script>
+</body>
+</html>
